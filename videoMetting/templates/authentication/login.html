@@ -15,11 +15,12 @@
         <div class="shape"></div>
         <div class="shape"></div>
     </div>
-    <form>
+    <form method="post">
+        {%csrf_token%}
         <h3>Login Here</h3>
 
-        <label for="username">Username</label>
-        {{form.username}}
+        <label for="username">Email</label>
+        {{form.email}}
         <label for="password">Password</label>
        {{form.password}}
 
