@@ -1,7 +1,6 @@
 from django.shortcuts import render,redirect
 from .forms import signUpForm
-from django.contrib.auth import login,logout,authenticate
-
+from django.contrib.auth.models import User
 
 def signUp(request):
     if request.method=='POST':
@@ -9,33 +8,34 @@ def signUp(request):
         if form.is_valid():
             form.save()
             return redirect('/')
-        else:
-            form=signUpForm()
-    return render(request,'authentication/signup.html') 
-def user_login(request):
+    else:
+        form=signUpForm()
+    return render(request,'authentication/signup.html',{'form':form}) 
+
+
+def login(request):
     if request.method == 'POST':
         form = signUpForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
-            password = form.cleaned_data['password']
-            user = form.save()  
-            user = authenticate(request, username=email, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect('/dashboard')
+            if User.objects.filter(email=email).exists():
+                return redirect('home')
             else:
-                return render(request, 'authentication/login.html', {"message": "Invalid credentials"})
+                return redirect('signUp')
     else:
-        form=signUpForm()
-    
-    return render(request, 'authentication/login.html',{"form":form})
+        form =signUpForm()
+    context = {'form': form}
+    return render(request, 'authentication/login.html', context)
 
 
 def home(request):
-    return render(request,'home.html')
+    return render(request,'pages/home.html')
 
 def dashboard(request):
-    return render(request,'dasboard.html')
+    return render(request,'pages/dasboard.html')
 
+
+def meeting(request):
+    return render(request,'pages/meeting.html')
 
 
