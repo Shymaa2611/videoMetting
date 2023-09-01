@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from .forms import signUpForm
+from .forms import signUpForm,LoginForm
 from django.contrib.auth.models import User
 
 def signUp(request):
@@ -15,15 +15,17 @@ def signUp(request):
 
 def login(request):
     if request.method == 'POST':
-        form = signUpForm(request.POST)
+        form = LoginForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
             if User.objects.filter(email=email).exists():
-                return redirect('home')
+               user = User.objects.get(email=email)
+               request.session['username'] = user.username
+               return redirect('dashboard')
             else:
                 return redirect('signUp')
     else:
-        form =signUpForm()
+        form =LoginForm()
     context = {'form': form}
     return render(request, 'authentication/login.html', context)
 
@@ -32,7 +34,9 @@ def home(request):
     return render(request,'pages/home.html')
 
 def dashboard(request):
-    return render(request,'pages/dasboard.html')
+    username = request.session.get('username', None)
+    context = {'username': username}
+    return render(request,'pages/dasboard.html',context)
 
 
 def meeting(request):
