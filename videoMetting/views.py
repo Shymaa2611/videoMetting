@@ -40,6 +40,10 @@ def dashboard(request):
 
 
 def meeting(request):
-    return render(request,'pages/meeting.html')
+    username = request.session.get('username', None)
+    return render(request,'pages/meeting.html',{'username':username})
 
+
+def joinRoom(request):
+    return render(request,'pages/join_room.html')
 
